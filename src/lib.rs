@@ -1,10 +1,18 @@
-mod command_viewer;
-pub use command_viewer::{CommandViewer, CommandViewerState};
+use thiserror::Error;
+
+pub mod components;
+
+#[derive(Error, Debug)]
+pub enum ComcomError {}
 
 pub fn format_arguments(arguments: Vec<String>) -> Vec<String> {
+    let arguments_iter = arguments
+        .into_iter()
+        .flat_map(|args| args.split(' ').into_iter().map(String::from).collect::<Vec<String>>());
+
     let mut previous_arg_collapsed = false;
 
-    arguments.into_iter().fold(vec![], |mut buf, next| {
+    arguments_iter.fold(vec![], |mut buf, next| {
         let last_arg = buf.last_mut();
 
         if let Some(last_arg) = last_arg {
@@ -12,12 +20,12 @@ pub fn format_arguments(arguments: Vec<String>) -> Vec<String> {
                 last_arg.push(' ');
                 last_arg.push_str(&next);
                 previous_arg_collapsed = true;
-                return buf
+                return buf;
             }
         }
 
         previous_arg_collapsed = false;
-        buf.push(next);
+        buf.push(next.to_string());
         buf
     })
 }
