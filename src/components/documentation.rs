@@ -1,9 +1,10 @@
+use std::cmp::{max, min};
 use std::process::Command;
 
 use crossterm::event::{Event, KeyCode, KeyModifiers};
 use tui::backend::Backend;
 use tui::layout::Rect;
-use tui::widgets::{Block, Borders, Paragraph, Wrap, BorderType};
+use tui::widgets::{Block, BorderType, Borders, Paragraph, Wrap};
 
 use crate::ComcomError;
 
@@ -22,7 +23,12 @@ impl Documentation {
             .output()
             .unwrap()
             .stdout;
-        let text = String::from_utf8_lossy(command_output).to_string();
+
+        let mut text = String::from_utf8_lossy(command_output).to_string();
+        if text.is_empty() {
+            text = "No Documentation Available".to_string()
+        }
+
         Self { offset: 0, text }
     }
 }
@@ -49,14 +55,12 @@ impl Component for Documentation {
         if let Event::Key(key) = event {
             match (key.code, key.modifiers) {
                 (KeyCode::Char('d'), KeyModifiers::CONTROL) => {
-                    if self.offset < self.text.matches('\n').count() - 5 {
+                    if self.offset + 5 < self.text.matches('\n').count() {
                         self.offset += 5;
                     }
                 }
                 (KeyCode::Char('u'), KeyModifiers::CONTROL) => {
-                    if self.offset > 0 {
-                        self.offset -= 5;
-                    }
+                    self.offset -= min(self.offset, 5);
                 }
                 _ => {}
             }

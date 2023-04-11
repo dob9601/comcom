@@ -118,7 +118,7 @@ impl Component for CommandViewer {
                     self.selected_index += 1;
                     self.mode = EditorMode::Insert
                 }
-                (KeyCode::Char('O'), KeyModifiers::NONE, EditorMode::Normal) => {
+                (KeyCode::Char('O'), KeyModifiers::SHIFT, EditorMode::Normal) => {
                     if self.selected_index > 0 {
                         self.arguments
                             .insert(self.selected_index - 1, "".to_string());
