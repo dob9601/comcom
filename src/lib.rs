@@ -1,4 +1,3 @@
-use clap::Parser;
 use thiserror::Error;
 
 use self::cli::Cli;
