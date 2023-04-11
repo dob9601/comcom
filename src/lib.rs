@@ -1,6 +1,10 @@
+use clap::Parser;
 use thiserror::Error;
 
+use self::cli::Cli;
+
 pub mod components;
+pub mod cli;
 
 #[derive(Error, Debug)]
 pub enum ComcomError {}
